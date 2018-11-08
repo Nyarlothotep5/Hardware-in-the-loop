@@ -1,11 +1,12 @@
 import Simulation as Sim
 
-filename = 'dane/TUCAN.csv'
-reg = r'sat[0-9]*'
-red = ['#version', 'serial', 'flight', 'call']
+filename = 'data/TUCAN.csv'
+reg = [r'sat[0-9]*']
+red = ['#version', 'serial', 'flight', 'call', 'lqi', 'state', 'state_name', 'rssi', 'drogue_voltage', 'main_voltage',
+       'battery_voltage', 'year', 'month', 'day', 'hour', 'minute', 'second', 'connected', 'locked']
 
-TeleMega = Sim.Simulation('TeleMega', filename, red, reg, 'COM3')
+sensors = Sim.Simulation('TeleMega', filename, red, reg, 'COM3', 115200)
 
-TeleMega.data_filter()
-TeleMega.show_data()
-TeleMega.simulate()
+sensors.filter_data()
+sensors.show_data()
+sensors.simulate()

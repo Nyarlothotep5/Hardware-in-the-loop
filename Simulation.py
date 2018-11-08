@@ -2,32 +2,35 @@ import re
 import time
 
 import pandas as pd
-import pyfirmata as pf
+import serial
 
 
 class Simulation:
-	def __init__(self, name: str, filename: str, redundant: list, reg: str, ard_port: str):
+	def __init__(self, name: str, filename: str, redundant: list, reg: list, port: str, baudrate: int):
 		self.name = name
 		self.data = pd.read_csv(filename)
 		self.redundant = redundant
 		self.reg = reg
-		self.port = ard_port
+		self.baudrate = baudrate
+		self.ser = serial.Serial(port)
 
-	def data_filter(self):
+	def filter_data(self):
 		for col in self.data:
-			if re.match(self.reg, col) is not None:
-				self.redundant.append(col)
+			for expr in self.reg:
+				if re.search(expr, col) is not None:
+					self.redundant.append(col)
 
 		self.data = self.data.drop(columns=self.redundant)
 
 	def show_data(self):
 		print(self.data)
 
-	# def send_data(self, brd: Arduino, dt_ind: int):
-	# sending signal
+	def send_data(self):
+		# TODO
+
+		print('')
 
 	def simulate(self):
-		board = pf.Arduino(self.port)
 
 		for ind in self.data.index:
 			timeframe = 0.01
@@ -36,5 +39,5 @@ class Simulation:
 
 			print(self.data.ix[ind])
 			print("time: ", self.data['time'][ind])
-			self.send_data(board, ind)
+			self.send_data()
 			time.sleep(timeframe)
